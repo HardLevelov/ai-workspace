@@ -59,7 +59,7 @@ AVAILABLE_MODELS = {
 
 def get_ai_response_stream(messages):
     url = "https://api.fireworks.ai/inference/v1/chat/completions"
-    payload = {"model": st.session_state.current_model, "max_tokens": 4096, "temperature": st.session_state.current_temp, "messages": messages, "stream": True}
+    payload = {"model": st.session_state.current_model, "max_tokens": 160000, "temperature": st.session_state.current_temp, "messages": messages, "stream": True}
     headers = {"Accept": "application/json", "Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"}
     
     try:
