@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant ✨</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Code highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1 class="logo">✨ AI Assistant</h1>
+            <button class="btn-icon sidebar-close" id="sidebarClose" title="Закрыть">✕</button>
+        </div>
+
+        <button class="btn-new-chat" id="newChatBtn">
+            <span class="icon">＋</span> Новый чат
+        </button>
+
+        <div class="chat-list" id="chatList"></div>
+
+        <div class="sidebar-footer">
+            <button class="btn-settings" id="settingsBtn">
+                <span class="icon">⚙️</span> Настройки
+            </button>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main content -->
+    <main class="main">
+        <header class="topbar">
+            <button class="btn-icon" id="sidebarToggle" title="Меню">☰</button>
+            <span class="topbar-title" id="topbarTitle">Новый чат</span>
+            <button class="btn-icon" id="deleteChatBtn" title="Удалить чат">🗑️</button>
+        </header>
+
+        <!-- Welcome screen -->
+        <div class="welcome" id="welcome">
+            <div class="welcome-content">
+                <h2>Чем я могу помочь?</h2>
+                <p>Введите сообщение или выберите пример ниже</p>
+                <div class="suggestions">
+                    <button class="suggestion" data-prompt="Объясни квантовые вычисления простыми словами">💡 Объясни квантовые вычисления</button>
+                    <button class="suggestion" data-prompt="Напиши функцию сортировки на Python с пояснениями">🐍 Напиши код на Python</button>
+                    <button class="suggestion" data-prompt="Составь план изучения веб-разработки на 3 месяца">📚 План изучения веб-разработки</button>
+                    <button class="suggestion" data-prompt="Переведи текст на английский и объясни грамматику">🌍 Помоги с переводом</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat messages -->
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="messageInput" placeholder="Напишите сообщение..." rows="1"></textarea>
+                <button class="btn-send" id="sendBtn" title="Отправить">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="input-footer">
+                <span class="model-badge" id="modelBadge">Qwen 3.6 Plus</span>
+                <span class="disclaimer">AI может ошибаться. Проверяйте важную информацию.</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Настройки</h2>
+                <button class="btn-icon modal-close" id="settingsClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label class="setting-label">🔑 API-ключ Fireworks AI</label>
+                    <p class="setting-desc">Получите ключ на <a href="https://fireworks.ai" target="_blank">fireworks.ai</a>. Ключ хранится только в вашем браузере.</p>
+                    <div class="api-key-input">
+                        <input type="password" id="apiKeyInput" placeholder="fw_..." autocomplete="off">
+                        <button class="btn-icon" id="toggleKeyVisibility" title="Показать/скрыть">👁️</button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">🤖 Модель</label>
+                    <select id="modelSelect">
+                        <option value="accounts/fireworks/models/qwen3p6-plus">Qwen 3.6 Plus — быстрая</option>
+                        <option value="accounts/fireworks/models/deepseek-v4-pro">DeepSeek V4 Pro — умная</option>
+                        <option value="accounts/fireworks/models/kimi-k2p6">Kimi 2.6 — сбалансированная</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">🌡️ Температура: <span id="tempValue">0.6</span></label>
+                    <p class="setting-desc">Ниже — точнее, выше — креативнее</p>
+                    <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.6">
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">🎨 Тема</label>
+                    <div class="theme-toggle">
+                        <button class="theme-btn active" data-theme="dark">🌙 Тёмная</button>
+                        <button class="theme-btn" data-theme="light">☀️ Светлая</button>
+                    </div>
+                </div>
+
+                <div class="setting-group danger-zone">
+                    <label class="setting-label">⚠️ Данные</label>
+                    <button class="btn-danger" id="clearAllData">Удалить все данные</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
